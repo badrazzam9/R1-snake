@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #000;
+    color: #0f0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app {
+    width: 240px;
+    min-height: 282px;
+    padding: 10px;
+    background: #111;
+    border: 2px solid #0f0;
+    border-radius: 8px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    background: #0a0;
+    color: #000;
+    border-radius: 4px;
+}
+
+header h1 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#score {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#game-board {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+#canvas {
+    background: #000;
+    border: 2px solid #0f0;
+    image-rendering: pixelated;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+#startBtn, #restartBtn {
+    padding: 10px 24px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    background: #0a0;
+    color: #000;
+    border: 2px solid #0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+#startBtn:hover, #restartBtn:hover {
+    background: #0f0;
+}
+
+#instructions {
+    text-align: center;
+    font-size: 10px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #f00;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+#gameOver h2 {
+    color: #f00;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#gameOver p {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
