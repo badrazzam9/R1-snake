@@ -12,14 +12,12 @@ const GRID_SIZE = 10;
 const TILE_COUNT = 20;
 
 let snake = [];
-let direction = { x: 1, y: 0 }; // Current direction
+let direction = { x: 1, y: 0 };
 let food = { x: 10, y: 10 };
 let score = 0;
 let gameLoop = null;
 let isPlaying = false;
 let gameSpeed = 150;
-let touchStartX = 0;
-let touchStartY = 0;
 
 function init() {
     snake = [
@@ -121,56 +119,60 @@ function startGame() {
     gameLoop = setInterval(update, gameSpeed);
 }
 
-// DIRECTIONAL CONTROLS - Swipe or Arrow keys for direct directions
 function changeDirection(newDir) {
     if (!isPlaying) return;
-    
-    // Prevent reversing into self
     if (newDir.x !== -direction.x && newDir.y !== -direction.y) {
         direction = newDir;
     }
 }
 
-// Swipe detection for touchscreen
-canvas.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-}, false);
+// TOUCH/SWIPE CONTROLS - Added to the entire document for better detection
+let touchStartX = 0;
+let touchStartY = 0;
+const MIN_SWIPE = 30;
 
-canvas.addEventListener('touchend', (e) => {
+document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, {passive: false});
+
+document.addEventListener('touchend', function(e) {
     if (!isPlaying) return;
     
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
     
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
     
-    const minSwipe = 30;
+    if (Math.abs(diffX) < MIN_SWIPE && Math.abs(diffY) < MIN_SWIPE) {
+        return; // Too small to be a swipe
+    }
     
     if (Math.abs(diffX) > Math.abs(diffY)) {
-        // Horizontal swipe
-        if (Math.abs(diffX) > minSwipe) {
-            if (diffX > 0) {
-                changeDirection({ x: 1, y: 0 }); // Right
-            } else {
-                changeDirection({ x: -1, y: 0 }); // Left
-            }
+        // Horizontal
+        if (diffX > 0) {
+            changeDirection({ x: 1, y: 0 }); // Right
+        } else {
+            changeDirection({ x: -1, y: 0 }); // Left
         }
     } else {
-        // Vertical swipe
-        if (Math.abs(diffY) > minSwipe) {
-            if (diffY > 0) {
-                changeDirection({ x: 0, y: 1 }); // Down
-            } else {
-                changeDirection({ x: 0, y: -1 }); // Up
-            }
+        // Vertical
+        if (diffY > 0) {
+            changeDirection({ x: 0, y: 1 }); // Down
+        } else {
+            changeDirection({ x: 0, y: -1 }); // Up
         }
     }
-}, false);
+}, {passive: false});
+
+// Prevent scrolling on touch
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, {passive: false});
 
 // Keyboard fallback
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', function(e) {
     if (e.key === 'ArrowUp') changeDirection({ x: 0, y: -1 });
     if (e.key === 'ArrowDown') changeDirection({ x: 0, y: 1 });
     if (e.key === 'ArrowLeft') changeDirection({ x: -1, y: 0 });
@@ -180,23 +182,19 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Rabbit R1 Scroll Wheel - Classic rotary style (optional, can coexist)
+// Rabbit R1 Scroll Wheel (optional)
 function handleScrollUp() {
     if (!isPlaying) return;
-    // Rotate clockwise
-    const dirs = [{x:0,y:-1}, {x:1,y:0}, {x:0,y:1}, {x:-1,y:0}];
+    const dirs = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}];
     const current = dirs.findIndex(d => d.x === direction.x && d.y === direction.y);
-    const next = dirs[(current + 1) % 4];
-    direction = next;
+    direction = dirs[(current + 1) % 4];
 }
 
 function handleScrollDown() {
     if (!isPlaying) return;
-    // Rotate counter-clockwise
-    const dirs = [{x:0,y:-1}, {x:1,y:0}, {x:0,y:1}, {x:-1,y:0}];
+    const dirs = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}];
     const current = dirs.findIndex(d => d.x === direction.x && d.y === direction.y);
-    const next = dirs[(current + 3) % 4];
-    direction = next;
+    direction = dirs[(current + 3) % 4];
 }
 
 window.addEventListener('scrollUp', handleScrollUp);
