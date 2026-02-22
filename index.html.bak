@@ -22,7 +22,7 @@
         </div>
         
         <div id="instructions">
-            Swipe to move • Scroll wheel also works
+            Scroll up/down to move
         </div>
         
         <div id="gameOver" class="hidden">

@@ -1,4 +1,4 @@
-// 🐍 Snake Game for Rabbit R1 - ROTARY CONTROLS
+// 🐍 Snake Game for Rabbit R1 - Classic Snake with Swipe Controls
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -18,42 +18,8 @@ let score = 0;
 let gameLoop = null;
 let isPlaying = false;
 let gameSpeed = 150;
-
-// Direction states: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT
-// Current direction index based on: x,y
-const DIR_MAP = {
-    '0,-1': 0,  // UP
-    '1,0': 1,   // RIGHT
-    '0,1': 2,   // DOWN
-    '-1,0': 3   // LEFT
-};
-
-const DIR_FROM_INDEX = [
-    { x: 0, y: -1 }, // 0 = UP
-    { x: 1, y: 0 },  // 1 = RIGHT
-    { x: 0, y: 1 },  // 2 = DOWN
-    { x: -1, y: 0 }  // 3 = LEFT
-];
-
-function getCurrentDirIndex() {
-    const key = `${direction.x},${direction.y}`;
-    return DIR_MAP[key] !== undefined ? DIR_MAP[key] : 1;
-}
-
-function cycleDirection(scrollUp) {
-    const current = getCurrentDirIndex();
-    let newIndex;
-    
-    if (scrollUp) {
-        // Clockwise: UP(0) → RIGHT(1) → DOWN(2) → LEFT(3) → UP(0)
-        newIndex = (current + 1) % 4;
-    } else {
-        // Counter-clockwise: UP(0) → LEFT(3) → DOWN(2) → RIGHT(1) → UP(0)
-        newIndex = (current + 3) % 4;
-    }
-    
-    direction = { ...DIR_FROM_INDEX[newIndex] };
-}
+let touchStartX = 0;
+let touchStartY = 0;
 
 function init() {
     snake = [
@@ -155,31 +121,86 @@ function startGame() {
     gameLoop = setInterval(update, gameSpeed);
 }
 
-// Scroll wheel - ROTARY control!
+// DIRECTIONAL CONTROLS - Swipe or Arrow keys for direct directions
+function changeDirection(newDir) {
+    if (!isPlaying) return;
+    
+    // Prevent reversing into self
+    if (newDir.x !== -direction.x && newDir.y !== -direction.y) {
+        direction = newDir;
+    }
+}
+
+// Swipe detection for touchscreen
+canvas.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+}, false);
+
+canvas.addEventListener('touchend', (e) => {
+    if (!isPlaying) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    const minSwipe = 30;
+    
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Horizontal swipe
+        if (Math.abs(diffX) > minSwipe) {
+            if (diffX > 0) {
+                changeDirection({ x: 1, y: 0 }); // Right
+            } else {
+                changeDirection({ x: -1, y: 0 }); // Left
+            }
+        }
+    } else {
+        // Vertical swipe
+        if (Math.abs(diffY) > minSwipe) {
+            if (diffY > 0) {
+                changeDirection({ x: 0, y: 1 }); // Down
+            } else {
+                changeDirection({ x: 0, y: -1 }); // Up
+            }
+        }
+    }
+}, false);
+
+// Keyboard fallback
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') changeDirection({ x: 0, y: -1 });
+    if (e.key === 'ArrowDown') changeDirection({ x: 0, y: 1 });
+    if (e.key === 'ArrowLeft') changeDirection({ x: -1, y: 0 });
+    if (e.key === 'ArrowRight') changeDirection({ x: 1, y: 0 });
+    if (e.key === ' ' || e.key === 'Enter') {
+        if (!isPlaying) startGame();
+    }
+});
+
+// Rabbit R1 Scroll Wheel - Classic rotary style (optional, can coexist)
 function handleScrollUp() {
     if (!isPlaying) return;
-    cycleDirection(true); // Clockwise
+    // Rotate clockwise
+    const dirs = [{x:0,y:-1}, {x:1,y:0}, {x:0,y:1}, {x:-1,y:0}];
+    const current = dirs.findIndex(d => d.x === direction.x && d.y === direction.y);
+    const next = dirs[(current + 1) % 4];
+    direction = next;
 }
 
 function handleScrollDown() {
     if (!isPlaying) return;
-    cycleDirection(false); // Counter-clockwise
+    // Rotate counter-clockwise
+    const dirs = [{x:0,y:-1}, {x:1,y:0}, {x:0,y:1}, {x:-1,y:0}];
+    const current = dirs.findIndex(d => d.x === direction.x && d.y === direction.y);
+    const next = dirs[(current + 3) % 4];
+    direction = next;
 }
 
-// Register R1 scroll events
-if (typeof window !== 'undefined') {
-    window.addEventListener('scrollUp', handleScrollUp);
-    window.addEventListener('scrollDown', handleScrollDown);
-    
-    // Keyboard fallback
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowUp') handleScrollUp();
-        if (e.key === 'ArrowDown') handleScrollDown();
-        if (e.key === ' ' || e.key === 'Enter') {
-            if (!isPlaying) startGame();
-        }
-    });
-}
+window.addEventListener('scrollUp', handleScrollUp);
+window.addEventListener('scrollDown', handleScrollDown);
 
 startBtn.addEventListener('click', startGame);
 restartBtn.addEventListener('click', startGame);

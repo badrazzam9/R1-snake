@@ -4,7 +4,7 @@
   <img src="https://fav.farm/🐍" alt="Snake R1">
 </p>
 
-A fully playable Snake game designed specifically for the Rabbit R1 device. Nostalgic Nokia-style gameplay with modern rotary controls.
+A fully playable Snake game designed specifically for the Rabbit R1 device. Classic snake gameplay with modern controls.
 
 ---
 
@@ -42,19 +42,12 @@ Visit: `https://badrazzam9.github.io/R1-snake/`
 
 | Input | Action |
 |-------|--------|
-| **Scroll Up** | Cycle direction clockwise |
-| **Scroll Down** | Cycle direction counter-clockwise |
-| **Tap Left** | Turn left |
-| **Tap Right** | Turn right |
-| **Tap Middle** | Toggle vertical direction |
-
-### How Rotary Controls Work
-
-If the snake is moving **RIGHT**:
-- Scroll UP → Now going **UP**
-- Scroll UP → Now going **LEFT**
-- Scroll UP → Now going **DOWN**
-- Scroll UP → Now going **RIGHT** (cycle complete!)
+| **Swipe Up** | Move up |
+| **Swipe Down** | Move down |
+| **Swipe Left** | Move left |
+| **Swipe Right** | Move right |
+| **Scroll Up** | Cycle clockwise (optional) |
+| **Scroll Down** | Cycle counter-clockwise (optional) |
 
 ---
 
@@ -64,7 +57,7 @@ This game was built from scratch using:
 
 - **HTML5 Canvas** — Game rendering
 - **Vanilla JavaScript** — Game logic
-- **CSS** — Retro Nokia-style aesthetics
+- **CSS** — Retro arcade-style aesthetics
 - **Rabbit R1 SDK** — Hardware integration (scroll wheel, TTS)
 
 ### Running Locally
@@ -103,7 +96,7 @@ This project was born from a late-night coding session between a human and their
 
 It started with a simple question: *"What can we build for this little AI-powered device?"*
 
-The answer: A classic Snake game — but reimagined for the R1's unique rotary scroll wheel interface. Instead of traditional directional controls, the game uses a **rotary system** where scrolling cycles through directions — giving that authentic Nokia feel while leveraging modern hardware.
+The answer: A classic Snake game — reimagined for the Rabbit R1. The game supports both swipe controls (like a phone) and the scroll wheel for flexible gameplay.
 
 What began as a proof-of-concept quickly became a fully playable game, demonstrating that the Rabbit R1 isn't just an AI companion — it's a legitimate platform for custom mini-apps.
 
